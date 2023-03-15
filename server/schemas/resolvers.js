@@ -1,9 +1,7 @@
 const { User, Book } = require("../models");
-const { AuthenticationError } = require('apollo-server-express');
-
+const { AuthenticationError } = require("apollo-server-express");
 
 const { signToken, authMiddleware } = require("../utils/auth");
-
 
 const resolvers = {
   Query: {
@@ -25,20 +23,35 @@ const resolvers = {
       const correctPw = await user.isCorrectPassword(password);
 
       if (!correctPw) {
-        throw new AuthenticationError('Incorrect credentials');
+        throw new AuthenticationError("Incorrect credentials");
       }
 
       const token = signToken(user);
 
-      return {token, user}
+      return { token, user };
     },
     addUser: async (parent, { username, password, email }) => {
       const user = await User.create({ username, password, email });
       const token = signToken(user);
       return { user, token };
     },
-    saveBook: async ( parent, { }, context) => {
-
-    }
+    saveBook: async (
+      parent,
+      { authors, description, title, bookId, image, link },
+      context
+    ) => {
+      if (context.user) {
+        const user = await User.findOneAndUpdate(
+          { _id: context.user._id },
+          {
+            $addToSet: {
+              saveBooks: authors, description, title, image, link, bookId,
+            },
+          }
+        );
+        return user
+      }
+      throw new AuthenticationError("You need to be logged in!");
+    },
   },
 };
