@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 
 // set token secret and expiration date
-const secret = 'mysecretsshhhhh';
+const secret = process.env.SECRET;
 const expiration = '2h';
 
 module.exports = {
@@ -11,7 +11,7 @@ module.exports = {
     let token = req.body.token || req.query.token || req.headers.authorization;
 
     // ["Bearer", "<tokenvalue>"]
-    if (req.headers.authorization) {
+    if (token) {
       token = token.split(' ').pop().trim();
     }
 
@@ -27,7 +27,6 @@ module.exports = {
       console.log('Invalid token');
     }
 
-    
     return req;
   },
   signToken: function ({ username, email, _id }) {
