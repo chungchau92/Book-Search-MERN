@@ -14,5 +14,11 @@
   "license": "ISC",
   "devDependencies": {
     "concurrently": "^5.1.0"
+  },
+  "dependencies": {
+    "nvm": "^0.0.4"
+  },
+  "engines": {
+    "node": "16.x"
   }
 }
